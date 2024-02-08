@@ -29,6 +29,8 @@ const RegistroForm = () => {
   const [fechaRegistro, setFechaRegistro] = useState("");
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [modal, setModal] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
 
   const handleReset = () => {
     setNombre("");
@@ -58,15 +60,27 @@ const RegistroForm = () => {
 
  
   const handleNombreChange = (event) => {
-    setNombre(event.target.value);
+    const inputValue = event.target.value;
+    if (/^[a-zA-Z]+$/.test(inputValue) || inputValue === "") {
+      setNombre(inputValue);
+    }
   };
 
   const handleApellidoChange = (event) => {
-    setApellido(event.target.value);
+    const inputValue = event.target.value;
+    if (/^[a-zA-Z]+$/.test(inputValue) || inputValue === "") {
+      setApellido(inputValue);
+    }
   };
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    const inputValue = event.target.value;
+    setEmail(inputValue);
+    if (!/\S+@\S+\.\S+/.test(inputValue) && inputValue !== "") {
+      setEmailError("El formato del correo electrónico es inválido");
+    } else {
+      setEmailError("");
+    }
   };
 
   const handlePasswordChange = (event) => {
@@ -74,7 +88,10 @@ const RegistroForm = () => {
   };
 
   const handleEdadChange = (event) => {
-    setEdad(event.target.value);
+    const inputValue = event.target.value;
+    if (!isNaN(inputValue) && inputValue >= 0 && inputValue <= 100) {
+      setEdad(inputValue);
+    }
   };
 
   const handleGeneroChange = (event) => {
@@ -90,8 +107,14 @@ const RegistroForm = () => {
   };
 
   const handleFechaRegistroChange = (event) => {
-    setFechaRegistro(event.target.value);
+    const inputValue = event.target.value;
+    const currentDate = new Date();
+    const selectedDate = new Date(inputValue);
+    if (selectedDate >= currentDate) {
+      setFechaRegistro(inputValue);
+    }
   };
+  
 
   const handleAceptaTerminosChange = (event) => {
     setAceptaTerminos(event.target.checked);
@@ -122,9 +145,9 @@ const RegistroForm = () => {
                 onChange={handleNombreChange}
                 pattern="[A-Za-z]+"
                 title="Solo se aceptan letras"
-                required
                 valid={nombre.length > 0}
                 invalid={!/^[A-Za-z]+$/.test(nombre)}
+                required
               />
             </FormGroup>
           </Col>
