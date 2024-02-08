@@ -13,7 +13,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter
+  ModalFooter,
 } from "reactstrap";
 
 const RegistroForm = () => {
@@ -22,9 +22,9 @@ const RegistroForm = () => {
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [edad, setEdad] = useState(0); 
-  const [genero, setGenero] = useState(""); 
-  const [rol, setRol] = useState("Estudiante"); 
+  const [edad, setEdad] = useState(0);
+  const [genero, setGenero] = useState("");
+  const [rol, setRol] = useState("Estudiante");
   const [notas, setNotas] = useState("");
   const [fechaRegistro, setFechaRegistro] = useState("");
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
@@ -42,8 +42,21 @@ const RegistroForm = () => {
     setFechaRegistro("");
   };
 
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+  
+    // ceros
+    month = month < 10 ? '0' + month : month;
+    day = day < 10 ? '0' + day : day;
+  
+    return `${year}-${month}-${day}`;
+  };
+  
 
-  // Funciones para manejar cambios en los campos del formulario
+ 
   const handleNombreChange = (event) => {
     setNombre(event.target.value);
   };
@@ -86,10 +99,10 @@ const RegistroForm = () => {
 
   const toggleModal = () => setModal(!modal);
 
-  // Manejar envío del formulario
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Aquí podrías enviar la información a una API, actualizar el estado global, etc.
+    
   };
   return (
     <Container style={{ maxWidth: "900px" }}>
@@ -105,8 +118,13 @@ const RegistroForm = () => {
                 id="nombre"
                 placeholder="Nombre"
                 style={{ maxWidth: "300px", margin: "auto" }}
-                value={nombre} // Valor del estado
-                onChange={handleNombreChange} // Función de manejo de cambios
+                value={nombre}
+                onChange={handleNombreChange}
+                pattern="[A-Za-z]+"
+                title="Solo se aceptan letras"
+                required
+                valid={nombre.length > 0}
+                invalid={!/^[A-Za-z]+$/.test(nombre)}
               />
             </FormGroup>
           </Col>
@@ -119,8 +137,13 @@ const RegistroForm = () => {
                 id="apellido"
                 placeholder="Apellido"
                 style={{ maxWidth: "300px", margin: "auto" }}
-                value={apellido} // Valor del estado
-                onChange={handleApellidoChange} // Función de manejo de cambios
+                value={apellido}
+                onChange={handleApellidoChange}
+                pattern="[A-Za-z]+"
+                title="Solo se aceptan letras"
+                required
+                valid={apellido.length > 0}
+                invalid={!/^[A-Za-z]+$/.test(apellido)}
               />
             </FormGroup>
           </Col>
@@ -135,8 +158,12 @@ const RegistroForm = () => {
                 id="email"
                 placeholder="Correo Electrónico"
                 style={{ maxWidth: "400px", margin: "auto" }}
-                value={email} // Valor del estado
-                onChange={handleEmailChange} // Función de manejo de cambios
+                value={email}
+                onChange={handleEmailChange}
+                title="Formato de correo electrónico inválido"
+                required
+                valid={/\S+@\S+\.\S+/.test(email)}
+                invalid={!/\S+@\S+\.\S+/.test(email)}
               />
             </FormGroup>
           </Col>
@@ -149,8 +176,9 @@ const RegistroForm = () => {
                 id="password"
                 placeholder="Contraseña"
                 style={{ maxWidth: "300px", margin: "auto" }}
-                value={password} // Valor del estado
-                onChange={handlePasswordChange} // Función de manejo de cambios
+                value={password}
+                onChange={handlePasswordChange}
+                required
               />
             </FormGroup>
           </Col>
@@ -163,8 +191,14 @@ const RegistroForm = () => {
                 id="edad"
                 placeholder="Edad"
                 style={{ maxWidth: "300px", margin: "auto" }}
-                value={edad} // Valor del estado
-                onChange={handleEdadChange} // Función de manejo de cambios
+                value={edad}
+                onChange={handleEdadChange}
+                min="0"
+                max="100"
+                title="Edad debe ser un número entre 1 y 100"
+                required
+                valid={edad > 0 && edad <= 100}
+                invalid={isNaN(edad) || edad <= 0 || edad > 100}
               />
             </FormGroup>
           </Col>
@@ -209,8 +243,8 @@ const RegistroForm = () => {
                 name="rol"
                 id="rol"
                 style={{ maxWidth: "300px", margin: "auto" }}
-                value={rol} // Valor del estado
-                onChange={handleRolChange} // Función de manejo de cambios
+                value={rol}
+                onChange={handleRolChange}
               >
                 <option>Estudiante</option>
                 <option>Profesor</option>
@@ -226,8 +260,8 @@ const RegistroForm = () => {
                 name="notas"
                 id="notas"
                 style={{ maxWidth: "500px", margin: "auto" }}
-                value={notas} // Valor del estado
-                onChange={handleNotasChange} // Función de manejo de cambios
+                value={notas}
+                onChange={handleNotasChange}
               />
             </FormGroup>
           </Col>
@@ -241,8 +275,17 @@ const RegistroForm = () => {
                 name="fechaRegistro"
                 id="fechaRegistro"
                 style={{ maxWidth: "300px", margin: "auto" }}
-                value={fechaRegistro} // Valor del estado
-                onChange={handleFechaRegistroChange} // Función de manejo de cambios
+                value={fechaRegistro}
+                onChange={handleFechaRegistroChange}
+                min={getCurrentDate()}
+                required
+                title="Fecha de registro inválida"
+                valid={
+                  new Date(fechaRegistro) >= new Date().setHours(0, 0, 0, 0)
+                }
+                invalid={
+                  new Date(fechaRegistro) < new Date().setHours(0, 0, 0, 0)
+                }
               />
             </FormGroup>
           </Col>
@@ -261,10 +304,14 @@ const RegistroForm = () => {
           </Col>
         </Row>
         <br></br>
-        <Button color="primary" onClick={toggleModal}>Mostrar</Button>
+        <Button color="primary" onClick={toggleModal}>
+          Mostrar
+        </Button>
         <br></br>
         <br></br>
-        <Button color="secondary" onClick={handleReset}>Reiniciar</Button>
+        <Button color="secondary" onClick={handleReset}>
+          Reiniciar
+        </Button>
       </Form>
 
       <Modal isOpen={modal} toggle={toggleModal}>
@@ -281,7 +328,9 @@ const RegistroForm = () => {
           <p>Fecha: {fechaRegistro}</p>
         </ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={toggleModal}>Cerrar</Button>
+          <Button color="secondary" onClick={toggleModal}>
+            Cerrar
+          </Button>
         </ModalFooter>
       </Modal>
     </Container>
