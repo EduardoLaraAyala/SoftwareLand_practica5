@@ -122,6 +122,16 @@ const RegistroForm = () => {
 
   const toggleModal = () => setModal(!modal);
 
+  const handleMostrarClick = () => {
+    // Verifica si todos los campos obligatorios están llenos
+    if (nombre && apellido && email && password && edad && fechaRegistro) {
+      toggleModal(); // Abre el modal si todos los campos están llenos
+    } else {
+      // Muestra un mensaje de error o realiza otra acción según tu preferencia
+      alert("Por favor, completa todos los campos obligatorios.");
+    }
+  };
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -327,7 +337,7 @@ const RegistroForm = () => {
           </Col>
         </Row>
         <br></br>
-        <Button color="primary" onClick={toggleModal}>
+        <Button color="primary" onClick={handleMostrarClick}>
           Mostrar
         </Button>
         <br></br>
