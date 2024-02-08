@@ -22,9 +22,9 @@ const RegistroForm = () => {
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [edad, setEdad] = useState(0); // Se inicializa con 0 como ejemplo, pero puede ser cualquier valor inicial
-  const [genero, setGenero] = useState(""); // Para un campo de radio, podría ser un string vacío para no seleccionado
-  const [rol, setRol] = useState("Estudiante"); // Se inicializa con "Estudiante" como ejemplo
+  const [edad, setEdad] = useState(0); 
+  const [genero, setGenero] = useState(""); 
+  const [rol, setRol] = useState("Estudiante"); 
   const [notas, setNotas] = useState("");
   const [fechaRegistro, setFechaRegistro] = useState("");
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
