@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../formulario.css";
+import { FaTrash, FaEdit } from "react-icons/fa";
+import "bootstrap/dist/css/bootstrap.min.css";
 import {
   Container,
   Form,
@@ -14,6 +16,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Table,
 } from "reactstrap";
 
 const RegistroForm = () => {
@@ -31,6 +34,11 @@ const RegistroForm = () => {
   const [modal, setModal] = useState(false);
   const [emailError, setEmailError] = useState("");
 
+ //para tabla
+ const [registros, setRegistros] = useState([]);
+ const [modalEditar, setModalEditar] = useState(false);
+ const [registroEditando, setRegistroEditando] = useState(null);
+
 
   const handleReset = () => {
     setNombre("");
@@ -44,21 +52,36 @@ const RegistroForm = () => {
     setFechaRegistro("");
   };
 
+ 
+  //abrir el modal de edición
+  const toggleModalEditar = () => {
+    setModalEditar(!modalEditar);
+  };
+
+  // Función para editar un registro
+  const handleEditarRegistro = (registro) => {
+    setRegistroEditando(registro);
+    toggleModalEditar();
+  };
+
+  const handleEliminarRegistro = (id) => {
+    const nuevosRegistros = registros.filter((registro) => registro.id !== id);
+    setRegistros(nuevosRegistros);
+  };
+
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     let month = today.getMonth() + 1;
     let day = today.getDate();
-  
+
     // ceros
-    month = month < 10 ? '0' + month : month;
-    day = day < 10 ? '0' + day : day;
-  
+    month = month < 10 ? "0" + month : month;
+    day = day < 10 ? "0" + day : day;
+
     return `${year}-${month}-${day}`;
   };
-  
 
- 
   const handleNombreChange = (event) => {
     const inputValue = event.target.value;
     if (/^[a-zA-Z]+$/.test(inputValue) || inputValue === "") {
@@ -114,7 +137,6 @@ const RegistroForm = () => {
       setFechaRegistro(inputValue);
     }
   };
-  
 
   const handleAceptaTerminosChange = (event) => {
     setAceptaTerminos(event.target.checked);
@@ -123,20 +145,62 @@ const RegistroForm = () => {
   const toggleModal = () => setModal(!modal);
 
   const handleMostrarClick = () => {
-    // Verifica si todos los campos obligatorios están llenos
+    //campos obligatorios llenos
     if (nombre && apellido && email && password && edad && fechaRegistro) {
-      toggleModal(); // Abre el modal si todos los campos están llenos
+      toggleModal();
     } else {
-      // Muestra un mensaje de error o realiza otra acción según tu preferencia
       alert("Por favor, completa todos los campos obligatorios.");
     }
   };
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    
   };
+
+  //para tabla
+  const handleGuardarClick = () => {
+    if (nombre && apellido && email && password && edad && fechaRegistro) {
+      const nuevoRegistro = {
+        nombre,
+        apellido,
+        email,
+        password,
+        edad,
+        genero,
+        rol,
+        notas,
+        fechaRegistro,
+      };
+      setRegistros([...registros, nuevoRegistro]);
+      handleReset();
+    } else {
+      alert("Por favor, completa todos los campos obligatorios.");
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRegistroEditando({
+      ...registroEditando,
+      [name]: value,
+    });
+  };
+
+  const handleGuardarCambios = () => {
+    // Encuentra el índice del registro que está siendo editado
+    const index = registros.findIndex(
+      (registro) => registro === registroEditando
+    );
+    // Crea una copia de los registros
+    const nuevosRegistros = [...registros];
+    // Reemplaza el registro editado en la copia de los registros
+    nuevosRegistros[index] = registroEditando;
+    // Actualiza el estado de los registros con la nueva lista
+    setRegistros(nuevosRegistros);
+    // Cierra el modal de edición
+    toggleModalEditar();
+  };
+  
   return (
     <Container style={{ maxWidth: "900px" }}>
       <h2>Formulario de Registro</h2>
@@ -345,6 +409,11 @@ const RegistroForm = () => {
         <Button color="secondary" onClick={handleReset}>
           Reiniciar
         </Button>
+        <br></br>
+
+        <Button color="success" onClick={handleGuardarClick}>
+          Guardar
+        </Button>
       </Form>
 
       <Modal isOpen={modal} toggle={toggleModal}>
@@ -366,6 +435,88 @@ const RegistroForm = () => {
           </Button>
         </ModalFooter>
       </Modal>
+
+      <div className="table-container">
+        <Table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Email</th>
+              <th>Edad</th>
+              <th>Género</th>
+              <th>Rol</th>
+              <th>Notas</th>
+              <th>Fecha de Registro</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {registros.map((registro, index) => (
+              <tr key={index}>
+                <td>{registro.nombre}</td>
+                <td>{registro.apellido}</td>
+                <td>{registro.email}</td>
+                <td>{registro.edad}</td>
+                <td>{registro.genero}</td>
+                <td>{registro.rol}</td>
+                <td>{registro.notas}</td>
+                <td>{registro.fechaRegistro}</td>
+                <td>
+                  <Button
+                    color="primary"
+                    onClick={() => handleEditarRegistro(registro)}
+                  >
+                    <FaEdit />
+                  </Button>
+                  <Button
+                    color="danger"
+                    onClick={() => handleEliminarRegistro(registro.id)}
+                  >
+                    <FaTrash></FaTrash>
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+      <Modal isOpen={modalEditar} toggle={toggleModalEditar}>
+  <ModalHeader toggle={toggleModalEditar}>Editar Registro</ModalHeader>
+  <ModalBody>
+    <FormGroup>
+      <Label for="nombre">Nombre</Label>
+      <Input
+        type="text"
+        name="nombre"
+        id="nombre"
+        value={registroEditando?.nombre || ""}
+        onChange={handleChange}
+      />
+    </FormGroup>
+    <FormGroup>
+      <Label for="apellido">Apellido</Label>
+      <Input
+        type="text"
+        name="apellido"
+        id="apellido"
+        value={registroEditando?.apellido || ""}
+        onChange={handleChange}
+      />
+    </FormGroup>
+    {/* Agrega más campos según sea necesario */}
+  </ModalBody>
+  <ModalFooter>
+    <Button color="primary" onClick={handleGuardarCambios}>
+      Guardar Cambios
+    </Button>{" "}
+    <Button color="secondary" onClick={toggleModalEditar}>
+      Cancelar
+    </Button>
+  </ModalFooter>
+</Modal>
+
     </Container>
   );
 };

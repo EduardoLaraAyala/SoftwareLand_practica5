@@ -1,0 +1,19 @@
+.table-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .table-container table {
+    width: 100%;
+    max-width: 900px; /* O el ancho deseado */
+    border-collapse: collapse;
+    font-size: 12px; /* Tamaño de fuente más pequeño */
+  }
+  
+  .table-container th, .table-container td {
+    border: 1px solid #dddddd;
+    padding: 8px; /* Espaciado interior de las celdas */
+    text-align: left;
+  }
+  

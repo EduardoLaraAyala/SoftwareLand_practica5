@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import "./components/tabla.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RegistroForm from './components/Formulario';
 
@@ -9,8 +10,9 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <br></br>
-        <RegistroForm></RegistroForm>
+        <RegistroForm></RegistroForm>    
       </header>
+      
     </div>
   );
 }
